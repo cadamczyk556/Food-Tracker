@@ -16,5 +16,11 @@
         img: "/file.svg",
         name: "smelly Burger",
         price: 9.99
-    }    
+    },
+    {
+        id: 4,
+        img: "/file.svg",
+        name: "nasty hotdog",
+        price: 9.99
+    }   
 ];
