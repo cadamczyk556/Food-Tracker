@@ -16,13 +16,13 @@ type FoodProps = {
 function FoodCard({ food }: FoodProps) {
   return (
     
-    <div className="flex flex-col bg-gray-600 border border-white/20 rounded-xl shadow-xl overflow-hidden h-full hover:shadow-2xl transition-shadow duration-300 hover:-translate-y-1 hover:bg-gray-500">
-      <div className="w-full h-48 relative">
+    <div className="flex p-8 flex-col bg-gray-600 border border-white/20 rounded-xl shadow-xl overflow-hidden h-full hover:shadow-2xl transition-shadow duration-300 hover:-translate-y-1 hover:bg-gray-500">
+      <div className="  w-full h-full relative">
         <Image 
           src={food.img} 
           alt={food.name}
           fill 
-          className="w-full h-48 object-cover mb-4 rounded-lg" 
+          className="w-full h-full object-cover mb-4 rounded-lg" 
           />
         </div>
 
