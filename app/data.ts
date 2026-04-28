@@ -1,7 +1,7 @@
  export const food = [
     {
     id: 1,
-    img: "Food-Tracker/public/file.svg",
+    img: "/pizza.jpg",
     name: "Delicious Pizza",
     price: 12.99
     },

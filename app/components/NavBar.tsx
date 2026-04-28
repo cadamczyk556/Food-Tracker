@@ -1,4 +1,5 @@
 
+
 function NavBar() {
     return (
 
@@ -20,7 +21,7 @@ function NavBar() {
 
 
             </ul>
-            <input type="text" placeholder="Search..." className="ml-4 px-2 py-1 rounded bg-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input type="text" placeholder="Search..." className="ml-4 px-2 py-1 rounded bg-gray-600 border-2 border-blue-400 text-white focus:outline-white focus:ring-2 focus:ring-blue-500" />
 
         </div>
 
