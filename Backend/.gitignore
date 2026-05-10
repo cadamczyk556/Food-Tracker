@@ -1,0 +1,13 @@
+# Ignore the database folder
+Database/
+
+# Ignore the virtual environment (CRITICAL!)
+venv/
+env/
+
+# Ignore Python cache files (these are generated automatically and clutter GitHub)
+__pycache__/
+*.pyc
+
+# Ignore environment variables (where your OpenAI API key will live later!)
+.env
