@@ -14,7 +14,7 @@ app.add_middleware(
 )
 
 def get_db():
-    conn = sqlite3.connect("")
+    conn = sqlite3.connect("hammer-2-processed.sqlite")
     # This magic line makes sure we get dictionaries back instead of weird tuples
     conn.row_factory = sqlite3.Row 
     return conn
