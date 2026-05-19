@@ -26,7 +26,17 @@ def search_food(query: str):
     # 1. The SQL Command
     # SELECT * means "get all columns"
     # WHERE name LIKE ? is how we search for text
-    sql_command = "SELECT * FROM products WHERE name LIKE ?"
+    sql_command = """
+        SELECT 
+            product.id, 
+            product.product_name AS name, 
+            product.detail_url AS img, 
+            raw.current_price AS price,
+            raw.price_per_unit
+        FROM product
+        JOIN raw ON product.id = raw.product_id
+        WHERE product.product_name LIKE ?
+    """
     
     # 2. The Wildcards
     # The % symbols mean "anything can come before or after"
