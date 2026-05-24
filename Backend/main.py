@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import sqlite3
+import os
 
 
 
@@ -13,8 +14,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "database", "hammer-2-processed.sqlite")
+
 def get_db():
-    conn = sqlite3.connect("hammer-2-processed.sqlite")
+    conn = sqlite3.connect(DB_PATH)
     # This magic line makes sure we get dictionaries back instead of weird tuples
     conn.row_factory = sqlite3.Row 
     return conn
@@ -27,15 +31,19 @@ def search_food(query: str):
     # SELECT * means "get all columns"
     # WHERE name LIKE ? is how we search for text
     sql_command = """
-        SELECT 
+       SELECT 
             product.id, 
+            product.vendor, 
             product.product_name AS name, 
             product.detail_url AS img, 
             raw.current_price AS price,
-            raw.price_per_unit
+            raw.price_per_unit,
+            MAX(raw.nowtime) as last_updated
         FROM product
         JOIN raw ON product.id = raw.product_id
         WHERE product.product_name LIKE ?
+        GROUP BY product.id 
+        LIMIT 30
     """
     
     # 2. The Wildcards

@@ -11,6 +11,7 @@ export interface GroceryItem {
   img: string;
   price: string;
   price_per_unit: string;
+  vendor: string;
 }
 
 
