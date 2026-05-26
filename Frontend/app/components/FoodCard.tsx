@@ -37,7 +37,7 @@ function FoodCard({ food }: FoodProps) {
         <div className="pt-3 border-t border-gray-500">
           <div className="flex items-baseline gap-2">
             <h5 className="text-2xl font-extrabold text-green-400">{displayPrice}</h5>
-            <p className="text-gray-300 font-medium text-sm">${food.price_per_unit}</p>
+            <p className="text-gray-300 font-medium text-sm">{food.price_per_unit}</p>
         </div>
         </div>
 

@@ -43,6 +43,17 @@ def search_food(query: str):
         JOIN raw ON product.id = raw.product_id
         WHERE product.product_name LIKE ?
         GROUP BY product.id 
+
+        ORDER BY 
+        
+        CASE 
+            WHEN raw.current_price IS NULL OR raw.current_price = '' OR raw.current_price = 'N/A' OR raw.current_price = 0 THEN 1
+            ELSE 0
+        END ASC,
+        
+        
+        CAST(raw.current_price AS REAL) ASC
+        
         LIMIT 30
     """
     
