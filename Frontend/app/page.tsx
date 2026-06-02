@@ -1,6 +1,7 @@
 "use client";
 
 import React, {useState} from 'react';
+import SpinningFruit from './components/SpinningFruit';
 
 
 export default function Home() {
@@ -11,17 +12,29 @@ export default function Home() {
 
         <div className={isClicked ? "dark" : ""}>
 
-            <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-black transition-colors ">
-                <h1 className="text-3xl font-bold text-black dark:text-white ">Welcome to the Food Tracker</h1>
-                <button 
-                    onClick={() => setClicked(!isClicked)}
-                    className={`cursor-pointer fixed bottom-6 left-6 z-50  ml-4 px-4 py-2 bg-black text-white rounded transition-colors duration-300 dark:bg-white dark:text-black `}>
-                    {isClicked ? "☀️ Light Mode" : "🌙 Dark Mode"}            
-                </button>
+            <div className="relative flex justify-center items-center min-h-screen bg-gray-100 dark:bg-black transition-colors overflow-hidden">
+
+                <div className="absolute inset-0 z-0">
+                    <SpinningFruit/>
+                </div>
+
+                <div className="relative z-10 flex flex-col items-center  pointer-events-none">
+                    <h1 className="text-3xl font-bold text-black dark:text-white ">Welcome to the Food Tracker</h1>
+                    <button 
+                        onClick={() => setClicked(!isClicked)}
+                        className={`pointer-events-auto cursor-pointer fixed bottom-6 left-6 z-50  ml-4 px-4 py-2 bg-black text-white rounded transition-colors duration-300 dark:bg-white dark:text-black `}>
+                        {isClicked ? "☀️ Light Mode" : "🌙 Dark Mode"}            
+                    </button>
+
+                </div>
+
+
+                
 
             </div>
 
         </div>
+
 
     );
 }
