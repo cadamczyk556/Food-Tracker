@@ -26,10 +26,9 @@ const FruitRandomiser = () => {
 
     const { scene } = useGLTF(randomPath);
 
-    // Rotate the fruit continuously    todo: check if roatating on x and y axis is good
     useFrame((state, delta) => {
         if (meshRef.current) {
-            meshRef.current.rotation.x += delta;
+           // meshRef.current.rotation.x += delta;
             meshRef.current.rotation.y += delta * 0.5;
         }
     });
@@ -39,7 +38,7 @@ const FruitRandomiser = () => {
             ref={meshRef}
             object={scene}
             scale={2}
-            position={[0, -1, 0]}
+            position={[0, 0, 0]}
         
         />
     );
