@@ -2,12 +2,14 @@
 
 import React, { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useGLTF } from "@react-three/drei";
+import { Center, useGLTF } from "@react-three/drei";
+import * as THREE from "three";
 
 const fruitFiles = [
     "/apple.glb",
     "/banana.glb",
-    "/grape.glb"
+    "/grape.glb",
+    "/cabbage.glb",
 ];
 
 
@@ -26,6 +28,16 @@ const FruitRandomiser = () => {
 
     const { scene } = useGLTF(randomPath);
 
+    const autoScale = useMemo(() => {
+        const box = new THREE.Box3().setFromObject(scene);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+
+        const maxDimension = Math.max(size.x, size.y, size.z);
+        const targetSize = 3.0;
+        return targetSize / maxDimension;
+    }, [scene]);
+
     useFrame((state, delta) => {
         if (meshRef.current) {
            // meshRef.current.rotation.x += delta;
@@ -34,13 +46,17 @@ const FruitRandomiser = () => {
     });
 
     return (
-        <primitive
-            ref={meshRef}
-            object={scene}
-            scale={2}
-            position={[0, 0, 0]}
-        
-        />
+        <group ref={meshRef} position={[0, 0, 0]}>
+            <Center>
+                <primitive
+                    ref={meshRef}
+                    object={scene}
+                    scale={autoScale}
+                    position={[0, 0, 0]}
+                
+                />
+            </Center>
+        </group>
     );
 
 

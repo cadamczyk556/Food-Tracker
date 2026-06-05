@@ -16,7 +16,7 @@ function NavBar() {
 
     return (
 
-        <div className="bg-gray-700 text-white px-6 py-6 flex items-center justify-between h-16">
+        <div className="bg-gray-700 sticky z-50 top-0 text-white px-6 py-6 flex items-center justify-between h-16">
 
             
             <div className="flex items-center gap-8 ml-50"> 
