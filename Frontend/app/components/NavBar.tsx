@@ -30,16 +30,16 @@ function NavBar() {
                 <img src="/vercel.svg" alt="Logo" className="flex-shrink-0 h-8 w-8" />
                 <ul className="flex items-center gap-4 sm:gap-6 text-sm sm:text-base font-medium">
                     <li className="nav-item">
-                        <a className="nav-link active" aria-current="page" href="/">Home</a>
+                        <a className="nav-link active hover:text-blue-400 transition-colors" aria-current="page" href="/">Home</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="#">Link</a>
+                        <a className="nav-link hover:text-blue-400 transition-colors" href="#">Link</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="#">Link</a>
+                        <a className="nav-link hover:text-blue-400 transition-colors" href="#">Link</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link disabled" aria-disabled="true">Disabled</a>
+                        <a className="nav-link disabled hover:text-blue-400 transition-colors" aria-disabled="true">Disabled</a>
                     </li>
 
 
@@ -67,7 +67,6 @@ function NavBar() {
                     </button>
                 </form>
             </div>
-
             </div>
         </div>
 

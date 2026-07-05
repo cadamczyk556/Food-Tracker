@@ -19,7 +19,7 @@ function FoodCard({ food }: FoodProps) {
   const displayPrice = food.price ? `$${food.price}` : "N/A";
   return (
     
-    <div className="h-full flex p-3 sm:p-5 flex-col bg-gray-600 border border-white/20 rounded-xl shadow-xl overflow-hidden min-h-[160px] hover:shadow-2xl transition-shadow duration-300 hover:-translate-y-1 hover:bg-gray-500">
+    <div className="h-full flex p-3 sm:p-5 flex-col bg-gray-600 border border-white/20 rounded-xl shadow-xl overflow-hidden min-h-[200px] md:min-h-[160px] hover:shadow-2xl transition-shadow duration-300 hover:-translate-y-1 hover:bg-gray-500">
 
       <div className="flex justify-start mb-3">
         <div className="z-10 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded shadow">
