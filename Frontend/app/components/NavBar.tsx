@@ -28,7 +28,10 @@ function NavBar() {
                 <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 w-full md:w-auto"> 
 
 
-                <img src="/banana.png" alt="Logo" className="shrink-0 h-8 w-8" />
+                <Link href="/">
+                    <img src="/banana.png" alt="Logo" className="shrink-0 h-8 w-8" />
+                </Link>
+
                 <ul className="flex items-center gap-4 sm:gap-6 text-sm sm:text-base font-medium">
                     <li className="nav-item">
                         <a className="nav-link active hover:text-blue-400 transition-colors" aria-current="page" href="/">Home</a>

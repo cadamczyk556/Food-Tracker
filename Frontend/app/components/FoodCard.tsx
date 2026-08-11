@@ -27,7 +27,7 @@ function FoodCard({ food }: FoodProps) {
           </div>
         </div>
       
-      <div className="mb-3 flex-grow">
+      <div className="mb-3 grow">
         {/* line-clamp-2 forces long names to safely wrap and truncate with ... */}
         <h5 className="text-sm sm:text-lg font-semibold text-white line-clamp-3 leading-snug">
           {food.name}
