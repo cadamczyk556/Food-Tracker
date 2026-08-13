@@ -21,7 +21,7 @@ function NavBar() {
         <div className="bg-gray-700 sticky z-50 top-0 text-white   w-full">
 
             
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex flex-col md:flex-row items-center justify-between gap-4"> 
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex flex-nowrap flex-col md:flex-row items-center justify-between gap-4"> 
 
                 {/* Logo and links */}
 
@@ -72,7 +72,7 @@ function NavBar() {
                 </form>
 
                 <Link href="/profile">
-                    <img src="/profile.jpg" alt="Profile" className="ml-4 h-8 w-8 rounded-full hover:ring-2 hover:ring-blue-500 hover:cursor-pointer" />
+                    <img src="/profile.jpg" alt="Profile" className="shrink-0 ml-4 h-8 w-8 rounded-full  mt-2 md-mt-0 hover:ring-2 hover:ring-blue-500 hover:cursor-pointer" />
                 </Link>
             </div>
             </div>
