@@ -4,10 +4,10 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-
+import { useSession, signOut } from "next-auth/react";
 
 export default function Profile() {
-
+const { data: session, status } = useSession();
 const router = useRouter();
 
 const [loginEmail, setLoginEmail] = useState("");

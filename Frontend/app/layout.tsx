@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import NavBar from "./components/NavBar";
 import Footer from "./components/CompFooter";
+import { SessionProvider } from "next-auth/react";  
 
 //this page will never reload (best to leave nav bar footers sidebars here)
 
@@ -34,10 +35,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
+        <SessionProvider>
           <NavBar />
-  
-        {children}
+          
+            
+              {children}
+            
         <Footer />
+        </SessionProvider>
       </body>
     </html>
   );

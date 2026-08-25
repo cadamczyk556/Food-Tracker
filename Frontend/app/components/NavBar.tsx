@@ -3,11 +3,13 @@ import React, {useState} from "react";
 import {useRouter} from "next/navigation";
 import { text } from "stream/consumers";
 import Link from "next/link"
+import { signIn, signOut, useSession } from "next-auth/react";
 
 function NavBar() {
 
     const [textInput, settextInput] = useState("");
     const router = useRouter();
+    const { data: session, status } = useSession();
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault()
@@ -74,6 +76,35 @@ function NavBar() {
                 <Link href="/profile">
                     <img src="/profile.jpg" alt="Profile" className="shrink-0 ml-4 h-8 w-8 rounded-full  mt-2 md-mt-0 hover:ring-2 hover:ring-blue-500 hover:cursor-pointer" />
                 </Link>
+
+
+                {status === "loading" && <p>Loading...</p>}
+
+                {status === "authenticated" && (
+                    <button
+                        onClick = {() => signOut()}
+                        className = "ml-4 px-4 py-1 rounded bg-red-600 hover:bg-red-700 text-white transition-colors duration-300 shrink-0  hover:cursor-pointer"
+                    >
+                        Sign Out
+                    </button>
+
+                )}
+
+                {status === "unauthenticated" && (
+
+                    <button
+                        onClick = {() => signIn()}
+                        className = "ml-4 px-4 py-1 rounded bg-green-600 hover:bg-green-700 text-white transition-colors duration-300 shrink-0 hover:cursor-pointer"
+                    >
+                        Sign In
+                    </button>
+
+                )}
+            
+
+            
+                
+            
             </div>
             </div>
         </div>
