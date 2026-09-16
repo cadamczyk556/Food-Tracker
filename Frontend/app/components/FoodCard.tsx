@@ -2,7 +2,7 @@ import Image from "next/image";
 
 type FoodProps = {
   food: {
-    id: number;
+  id: number;
   name: string;
   img: string;
   price: string;
