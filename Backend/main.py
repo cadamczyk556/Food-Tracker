@@ -1,16 +1,20 @@
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
-import bcrypt
+from dotenv import load_dotenv
 import sqlite3
+import bcrypt
+import psycopg2
+from psycopg2.extras import RealDictCursor
 import os
 
-
+load_dotenv()  # Load environment variables from .env file
 
 app = FastAPI()
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[FRONTEND_URL],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -19,34 +23,12 @@ app.add_middleware(
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "database", "hammer-2-processed.sqlite")
 
+DATABASE_URL = os.getenv("DATABASE_URL")
+
 def get_db():
-    conn = sqlite3.connect(DB_PATH)
-    # This magic line makes sure we get dictionaries back instead of weird tuples
-    conn.row_factory = sqlite3.Row 
+    conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
     return conn
 
-AUTH_DB_PATH = os.path.join(BASE_DIR, "database", "users.sqlite")
-
-def get_auth_db():
-    conn = sqlite3.connect(AUTH_DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-
-def init_auth_db():
-    conn = get_auth_db()
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL
-        )
-    """)
-    conn.commit()
-    conn.close()
-
-init_auth_db()
 
 class UserAuthSchema(BaseModel):
     email: EmailStr
@@ -68,9 +50,10 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 @app.post("/api/register")
 def register_user(user_data: UserAuthSchema):
-    conn = get_auth_db()
+    conn = get_db()
+    cursor = conn.cursor()
 
-    cursor = conn.execute("SELECT * FROM users WHERE email = ?", (user_data.email,))
+    cursor.execute("SELECT * FROM users WHERE email = %s", (user_data.email,))
     if cursor.fetchone():
         conn.close()
         raise HTTPException(
@@ -79,12 +62,14 @@ def register_user(user_data: UserAuthSchema):
         )
 
     hashed_pwd = hash_password(user_data.password)
-    conn.execute(
-        "INSERT INTO users (email, password_hash) VALUES (?, ?)", 
+    cursor.execute(
+        "INSERT INTO users (email, password_hash) VALUES (%s, %s) RETURNING id",
         (user_data.email, hashed_pwd)
     )
+    new_user_id = cursor.fetchone()["id"]
+
     conn.commit()
-    new_user_id = cursor.lastrowid
+    cursor.close()
     conn.close()
 
     return {"message": "User created successfully", "id": new_user_id}
@@ -93,10 +78,12 @@ def register_user(user_data: UserAuthSchema):
 
 @app.post("/api/login")
 def login_user(credentials: UserAuthSchema):
-    conn = get_auth_db()
+    conn = get_db()
+    cursor = conn.cursor()
 
-    cursor= conn.execute("SELECT * FROM users WHERE email = ?", (credentials.email,))
+    cursor.execute("SELECT * FROM users WHERE email = %s", (credentials.email,))
     user = cursor.fetchone()
+    cursor.close()
     conn.close()
 
     if not user or not verify_password(credentials.password, user["password_hash"]):
@@ -116,48 +103,51 @@ def login_user(credentials: UserAuthSchema):
 @app.get("/api/search")
 def search_food(query: str):
     conn = get_db()
+    cursor = conn.cursor()
     
-    # 1. The SQL Command
-    # SELECT * means "get all columns"
-    # WHERE name LIKE ? is how we search for text
+    # 1. The PostgreSQL Command
     sql_command = """
-       SELECT 
-            product.id, 
-            product.vendor, 
-            product.product_name AS name, 
-            product.detail_url AS img, 
-            raw.current_price AS price,
-            raw.price_per_unit,
-            MAX(raw.nowtime) as last_updated
-        FROM product
-        JOIN raw ON product.id = raw.product_id
-        WHERE product.product_name LIKE ?
-        GROUP BY product.id 
-
+        WITH latest_prices AS (
+            SELECT DISTINCT ON (product.id)
+                product.id, 
+                product.vendor, 
+                product.product_name AS name, 
+                product.detail_url AS img, 
+                raw.current_price AS price,
+                raw.price_per_unit,
+                raw.nowtime AS last_updated
+            FROM product
+            JOIN raw ON product.id = raw.product_id
+            WHERE product.product_name ILIKE %s
+            ORDER BY product.id, raw.nowtime DESC
+        )
+        SELECT * FROM latest_prices
         ORDER BY 
-        
-        CASE 
-            WHEN raw.current_price IS NULL OR raw.current_price = '' OR raw.current_price = 'N/A' OR raw.current_price = 0 THEN 1
-            ELSE 0
-        END ASC,
-        
-        
-        CAST(raw.current_price AS REAL) ASC
-        
-        LIMIT 30
+            CASE 
+                WHEN price IS NULL 
+                  OR price = '' 
+                  OR price = 'N/A' 
+                  OR price = '0' 
+                  OR price !~ '^[0-9]+(\.[0-9]+)?$' 
+                THEN 1
+                ELSE 0
+            END ASC,
+            CASE 
+                WHEN price ~ '^[0-9]+(\.[0-9]+)?$' THEN CAST(price AS REAL)
+                ELSE NULL
+            END ASC
+        LIMIT 30;
     """
     
     # 2. The Wildcards
-    # The % symbols mean "anything can come before or after"
-    # So if query is "milk", it searches for "%milk%" and will find "2% Milk 1L"
     search_term = f"%{query}%"
     
-    # 3. Execute the search
-    # We pass the search_term in a tuple (search_term,) for security against hackers
-    cursor = conn.execute(sql_command, (search_term,))
+    # 3. Execute the search using cursor.execute (conn.execute doesn't exist in psycopg2)
+    cursor.execute(sql_command, (search_term,))
     results = cursor.fetchall()
     
+    cursor.close()
     conn.close()
     
-    # 4. Convert the results into a clean list of dictionaries for React
+    # 4. RealDictCursor already formats rows as dicts, or [dict(row) for row in results] works too
     return [dict(row) for row in results]

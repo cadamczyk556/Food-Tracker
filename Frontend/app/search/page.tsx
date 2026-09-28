@@ -27,7 +27,8 @@ function GroceryList() {
       setLoading(true);
       try {
 
-        const response = await fetch(`http://localhost:8000/api/search?query=${searchQuery}`);
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+        const response = await fetch(`${API_URL}/api/search?query=${searchQuery}`);
 
         if (!response.ok) {
           throw new Error("Network response was not ok");
