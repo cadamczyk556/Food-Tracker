@@ -106,7 +106,7 @@ def search_food(query: str):
     cursor = conn.cursor()
     
     # 1. The PostgreSQL Command
-    sql_command = """
+    sql_command = r"""
         WITH latest_prices AS (
             SELECT DISTINCT ON (product.id)
                 product.id, 
